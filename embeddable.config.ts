@@ -4,23 +4,20 @@ import react from '@embeddable.com/sdk-react';
 export default defineConfig({
   plugins: [react],
 
-  /* 
+  /*
    * uncomment for EU deployments
    */
   // region: 'EU',
 
-  /* 
+  /*
    * uncomment for US deployments
    */
   // region: 'US',
 
-  /* 
-   * Uncomment use ALL vanilla components. 
+  /*
+   * Uncomment use ALL vanilla components.
    */
   // componentLibraries: ['@embeddable.com/vanilla-components'],
-
-
-
 
   //For internal use only (this helps us help you debug issues)
   //
