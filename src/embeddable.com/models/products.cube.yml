@@ -27,6 +27,11 @@ cubes:
         type: sum
         title: Total USD
         sql: price_usd
+    
+    joins:
+      - name: orders # the name of the data model to join to (not the table)
+        sql: "{CUBE}.id = {orders}.product_id"
+        relationship: one_to_many
 
     pre_aggregations:
     # Pre-aggregation definitions go here.
