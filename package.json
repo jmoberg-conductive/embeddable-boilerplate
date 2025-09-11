@@ -25,10 +25,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@embeddable.com/core": "^2.11.0",
-    "@embeddable.com/react": "^2.10.10",
-    "@embeddable.com/sdk-core": "^4.1.1",
-    "@embeddable.com/sdk-react": "^4.0.5",
+    "@embeddable.com/core": "^2.11.1",
+    "@embeddable.com/react": "^2.11.0",
+    "@embeddable.com/sdk-core": "^4.1.2",
+    "@embeddable.com/sdk-react": "^4.0.6",
     "cross-env": "^7.0.3"
   }
 }
