@@ -12,7 +12,7 @@ export default defineConfig({
   /*
    * uncomment for US deployments
    */
-  // region: 'US',
+  region: 'US',
 
   /*
    * Uncomment use ALL vanilla components.
