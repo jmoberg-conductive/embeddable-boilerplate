@@ -9,6 +9,7 @@ import React from 'react';
 type Props = {
   title: string;
   body: string;
+  body2: string;
 };
 
 export default (props: Props) => {
@@ -16,6 +17,7 @@ export default (props: Props) => {
     <div className="basic-text-component">
       <h1>{props.title}</h1>
       <p>{props.body}</p>
+      <p>{props.body2}</p>
     </div>
   );
 };

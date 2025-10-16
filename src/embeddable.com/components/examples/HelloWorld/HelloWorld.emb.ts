@@ -28,6 +28,12 @@ export const meta = {
       label: 'Body',
       description: 'The text content',
     },
+    {
+      name: 'body2',
+      type: 'string',
+      label: 'Body2',
+      description: 'The text content 2',
+    },
   ],
 } as const satisfies EmbeddedComponentMeta;
 
@@ -36,6 +42,7 @@ export default defineComponent(Component, meta, {
     return {
       title: inputs.title,
       body: inputs.body,
+      body2: inputs.body2,
     };
   },
 });
