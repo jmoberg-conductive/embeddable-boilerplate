@@ -2,14 +2,14 @@
  * This file controls what inputs show up when you edit the component in the
  * Embeddable.com builder, and how it loads data.
  *
- * You can delete this folder once you move to Vanilla Components post-Onboarding
+ * Now using Vanilla Components which automatically respect your theme!
  */
 import {
   EmbeddedComponentMeta,
   Inputs,
   defineComponent,
 } from '@embeddable.com/react';
-import { Dataset, Dimension, Measure, loadData } from '@embeddable.com/core';
+import { loadData } from '@embeddable.com/core';
 
 import Component from './index';
 
@@ -46,7 +46,7 @@ export const meta = {
     {
       name: 'showLegend',
       type: 'boolean',
-      label: 'Turn on the legend',
+      label: 'Show legend',
       category: 'Chart settings',
       defaultValue: true,
     },

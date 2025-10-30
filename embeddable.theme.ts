@@ -1,5 +1,6 @@
 import { defineTheme } from '@embeddable.com/core';
 import { Theme } from '@embeddable.com/vanilla-components';
+import pwtheme from './src/themes/pw.theme';
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   /*
@@ -10,6 +11,11 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   if (clientContext?.theme === 'default') {
     return parentTheme;
   }
+
+  if (clientContext?.theme === 'pwtheme') {
+    return defineTheme(parentTheme, pwtheme) as Theme;
+  }
+
 
   /*
    * This theme can be as simple or complex as you need it to be

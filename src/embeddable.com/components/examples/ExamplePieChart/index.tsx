@@ -1,8 +1,5 @@
 /*
- * This component displays a simple pie chart using Chart.js and React.
- * Its props are passed from the .emb.ts file
- *
- * You can delete this folder once you move to Vanilla Components post-Onboarding
+ * This component displays a pie chart using Chart.js and now respects your custom theme colors!
  */
 import React from 'react';
 import {
@@ -21,6 +18,8 @@ import Error from '../Error';
 import { Pie } from 'react-chartjs-2';
 import { Dimension, Measure, Dataset } from '@embeddable.com/core';
 import { DataResponse } from '@embeddable.com/core';
+import { useTheme } from '@embeddable.com/react';
+import { Theme } from '@embeddable.com/vanilla-components';
 
 ChartJS.register(
   CategoryScale,
@@ -33,21 +32,6 @@ ChartJS.register(
   Legend,
 );
 
-const COLORS = [
-  '#2859C5',
-  '#F58D02',
-  '#964FD2',
-  '#FF6B6C',
-  '#B8B8D1',
-  '#FFC145',
-  '#4473D9',
-  '#FDA32B',
-  '#AF79DD',
-  '#FF9E9F',
-  '#D7D7E5',
-  '#FFD37A',
-];
-
 const chartOptions = (showLegend) => ({
   responsive: true,
   maintainAspectRatio: false,
@@ -59,13 +43,13 @@ const chartOptions = (showLegend) => ({
   },
 });
 
-const chartData = (labels, counts) => {
+const chartData = (labels, counts, colors) => {
   return {
     labels,
     datasets: [
       {
         data: counts,
-        backgroundColor: COLORS,
+        backgroundColor: colors,
         borderColor: '#fff',
         borderWeight: 5,
       },
@@ -75,15 +59,19 @@ const chartData = (labels, counts) => {
 
 type Props = {
   ds: Dataset;
-  slice: Dimension; // { name, title }
-  metric: Measure; // [{ name, title }]
-  results: DataResponse; // { isLoading, error, data: [{ <name>: <value>, ... }] }
+  slice: Dimension;
+  metric: Measure;
+  results: DataResponse;
   showLegend: boolean;
 };
 
 export default (props: Props) => {
   const { slice, metric, showLegend, results } = props;
   const { isLoading, data, error } = results;
+
+  // Get theme colors - this will use your pwtheme colors!
+  const theme = useTheme() as Theme;
+  const colors = theme?.charts?.pie?.colors || theme?.charts?.colors || [];
 
   if (isLoading) {
     return <Spinner/>;
@@ -102,7 +90,7 @@ export default (props: Props) => {
     <>
       <Pie
         options={chartOptions(showLegend)}
-        data={chartData(labels, counts)}
+        data={chartData(labels, counts, colors)}
         height="100%"
       />
     </>
