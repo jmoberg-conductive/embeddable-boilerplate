@@ -37,13 +37,14 @@ The project uses React and TypeScript with Vite.js bundling to create custom com
 The main configuration is in [embeddable.config.ts](embeddable.config.ts):
 - Set `region: 'US'` or `region: 'EU'` based on deployment target
 - Uses `@embeddable.com/sdk-react` plugin for React support
-- Can enable vanilla components via `componentLibraries: ['@embeddable.com/vanilla-components']`
+- Enable vanilla components library via `componentLibraries: ['@embeddable.com/vanilla-components']` (currently enabled)
 
 ### Directory Structure
 - `src/embeddable.com/components/` - Custom React components
 - `src/embeddable.com/models/` - Data models defined in Cube.js YAML format
 - `src/embeddable.com/presets/` - Client contexts (.cc.yml) and security contexts (.sc.yml)
 - `src/embeddable.com/scripts/` - Custom scripts
+- `src/themes/` - Custom theme definitions (e.g., `pw.theme.ts` for Peak Workflow)
 
 ### Components
 Each component consists of:
@@ -89,6 +90,104 @@ See [src/embeddable.com/models/claude.md](src/embeddable.com/models/claude.md) f
 
 See [src/embeddable.com/presets/claude.md](src/embeddable.com/presets/claude.md) for detailed preset documentation.
 
+### Theming
+
+Custom themes allow you to define brand-specific colors, fonts, and styling for your analytics components.
+
+**Theme Architecture:**
+- **Root theme provider**: [embeddable.theme.ts](embeddable.theme.ts) - Contains the main `themeProvider` function
+- **Theme files**: Store in `src/themes/` (e.g., `src/themes/pw.theme.ts`)
+- **Theme switching**: Based on client context values (see [src/embeddable.com/presets/client-contexts.cc.yml](src/embeddable.com/presets/client-contexts.cc.yml))
+
+**Creating Custom Themes:**
+
+1. **Create a theme file** in `src/themes/yourtheme.theme.ts`:
+```typescript
+import { ThemePartial } from '@embeddable.com/vanilla-components';
+
+const yourtheme: ThemePartial = {
+  brand: {
+    primary: '#206bbb',
+    secondary: '#4f5095',
+  },
+  charts: {
+    colors: ['#206bbb', '#4f5095', '#10b981', '#f59e0b', '#ef4444'],
+    // Override specific chart types
+    pie: {
+      colors: ['#206bbb', '#4f5095', '#10b981', '#f59e0b', '#ef4444'],
+    },
+    bar: {
+      colors: ['#206bbb', '#4f5095', '#10b981', '#f59e0b', '#ef4444'],
+    },
+  },
+  font: {
+    family: 'Arial, sans-serif',
+  },
+};
+
+export default yourtheme;
+```
+
+2. **Import and register** in [embeddable.theme.ts](embeddable.theme.ts):
+```typescript
+import { defineTheme } from '@embeddable.com/core';
+import { Theme } from '@embeddable.com/vanilla-components';
+import yourtheme from './src/themes/yourtheme.theme';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  if (clientContext?.theme === 'yourtheme') {
+    return defineTheme(parentTheme, yourtheme) as Theme;
+  }
+  return parentTheme;
+};
+```
+
+3. **Add client context** in [src/embeddable.com/presets/client-contexts.cc.yml](src/embeddable.com/presets/client-contexts.cc.yml):
+```yaml
+- name: Your Theme Name
+  clientContext:
+    theme: 'yourtheme'
+  canvas:
+    background: "#fff"
+```
+
+**Using Themes in Custom Components:**
+
+To access theme values in your React components, use the `useTheme()` hook:
+
+```typescript
+import { useTheme } from '@embeddable.com/react';
+import { Theme } from '@embeddable.com/vanilla-components';
+
+export default (props) => {
+  const theme = useTheme() as Theme;
+
+  // Access theme colors
+  const colors = theme?.charts?.pie?.colors || theme?.charts?.colors || [];
+  const primaryColor = theme?.brand?.primary;
+
+  // Use in your component...
+};
+```
+
+**Important Notes:**
+- Components using hardcoded colors will **override** theme colors
+- Always use `useTheme()` hook to respect theme settings
+- The `defineTheme()` function merges your customizations with defaults
+- Theme changes require a rebuild: `npm run embeddable:build`
+- Select the theme in the builder using the client context dropdown
+
+**Available Theme Properties:**
+- `brand.primary`, `brand.secondary` - Brand colors
+- `charts.colors` - Global chart color palette
+- `charts.[chartType].colors` - Chart-specific colors (pie, bar, line, bubble, scatter, kpi)
+- `charts.[chartType].borderRadius`, `.borderWidth` - Border styling
+- `charts.[chartType].font.size`, `.font.weight` - Typography
+- `font.family` - Global font family
+- `controls.borders.colors` - Control element styling
+
+See the `Theme` interface in `node_modules/@embeddable.com/vanilla-components/dist/themes/theme.d.ts` for complete options.
+
 ## Deployment Workflow
 1. Set region in [embeddable.config.ts](embeddable.config.ts) (`'US'` or `'EU'`)
 2. Build: `npm run embeddable:build` - Bundles components with Vite.js
@@ -105,8 +204,34 @@ rm -rf node_modules package-lock.json && npm install
 
 ## References
 
+### Official Documentation
 - Official documentation: https://docs.embeddable.com/
 - Getting started: https://docs.embeddable.com/getting-started/first-embeddable
 - Component development: https://docs.embeddable.com/development/introduction
 - Data modeling: https://docs.embeddable.com/data-modeling/introduction
 - Row-level security: https://docs.embeddable.com/data-modeling/row-level-security
+- Theming guide: https://docs.embeddable.com/development/theming
+- Defining components: https://docs.embeddable.com/development/defining-components
+- Building interactive components: https://docs.embeddable.com/development/interactivity
+
+### GitHub Resources
+- Vanilla Components Library: https://github.com/embeddable-hq/vanilla-components
+  - Starter pack of beautiful components with full source code
+  - Contains reference implementations for charts (Pie, Bar, Line, etc.)
+  - Examples of theme integration and best practices
+  - Location: `src/components/vanilla/charts/[ChartType]/`
+- Embeddable Organization: https://github.com/embeddable-hq
+
+### Key Concepts
+- **Vanilla Components** are reference implementations, not pre-built imports
+  - The library provides starter code that can be copied and customized
+  - Enables full control over component behavior and styling
+  - Located in the vanilla-components repository on GitHub
+- **useTheme() Hook** enables theme-aware components
+  - Import from `@embeddable.com/react`
+  - Returns current active theme based on client context
+  - Must cast to `Theme` type from `@embeddable.com/vanilla-components`
+- **Client Context** drives theme selection in the builder
+  - Defined in `.cc.yml` files
+  - Accessible via dropdown in preview workspace
+  - Not for security (use Security Context for that)
